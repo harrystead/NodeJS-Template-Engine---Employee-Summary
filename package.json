@@ -1,0 +1,26 @@
+{
+  "name": "template-engine---employee-summary",
+  "version": "1.0.0",
+  "description": "template employee summary",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harrystead/Template-Engine---Employee-Summary.git"
+  },
+  "keywords": [
+    "employee",
+    "summary"
+  ],
+  "author": "harry",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harrystead/Template-Engine---Employee-Summary/issues"
+  },
+  "homepage": "https://github.com/harrystead/Template-Engine---Employee-Summary#readme",
+  "dependencies": {
+    "inquirer": "^7.3.3"
+  }
+}
