@@ -1,9 +1,9 @@
 
-const prompt = require('./lib/prompt');
+const enterPrompt = require('./lib/prompt');
 
 async function init() {
     try {
-        await prompt.enterPrompt();
+        await enterPrompt();
     }
     catch (error) {
         console.error(error);
