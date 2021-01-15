@@ -194,3 +194,12 @@ const promptIntern = () => {
         promptNext();
     });
 };
+
+const createHtml = () => {
+    console.log('this is new html');
+    console.log(render(mainArr));
+    render(mainArr);
+    fs.writeFile('index.html', render(mainArr), function(err){
+        if(err) throw err;
+    })
+};
