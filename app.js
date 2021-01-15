@@ -1,101 +1,196 @@
-const inquirer = require('inquirer');
+const inquirer = require("inquirer");
+const fs = require("fs");
 
+const Manager = require("./lib/manager");
+const Engineer = require("./lib/engineer");
+const Intern = require("./lib/intern");
 
-function managerQuestions () {
+let mainArr = [];
 
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "name",
-            message: "Enter the Mananger's full name."
-        },
-        {
-            type: "input",
-            name: "email",
-            message: "Enter the Mananger's email."
-        },
-        {
-            type: "input",
-            name: "office",
-            message: "Enter the Mananger's office number.",
-        },
-        {
-            type: "input",
-            name: "name",
-            message: "Enter the Mananger's full name.",
-        },
-        {
-        type: "list",
-        name: "hasTeam",
-        message: "Do you have any employees to add?",
-        choices: ["Yes", "No"]
-        }
-    ]).then(function (userInput) {
-        const affirmEmployees = userInput.hasTeam;
-        console.log(typeof affirmEmployees);
-    
-        if(affirmEmployees === "Yes"){
-            promptEmployeeQuestions()
-        }
-        else{
-            //only add the manager.
-        }
-    })
-}
+const confirmManager = [
+  {
+    type: "confirm",
+    name: "Manager",
+    message: "Are you a manager?",
+  },
+];
+const managersBio = [
+  {
+    type: "input",
+    name: "managers_name",
+    message: "What is your name?",
+  },
+  {
+    type: "input",
+    name: "managers_id",
+    message: "What is your id?",
+  },
+  {
+    type: "input",
+    name: "managers_email",
+    message: "What is your email?",
+  },
+  {
+    type: "input",
+    name: "managers_officeNumber",
+    message: "What is your office phone number?",
+  },
+];
+const myManagersBio = [
+  {
+    type: "input",
+    name: "my_managers_name",
+    message: "What is your manager's name?",
+  },
+  {
+    type: "input",
+    name: "my_managers_department",
+    message: "What is your manager's department?",
+  },
+  {
+    type: "input",
+    name: "my_managers_id",
+    message: "What is your manager's id?",
+  },
+  {
+    type: "input",
+    name: "my_managers_email",
+    message: "What is your manager's email?",
+  },
+  {
+    type: "input",
+    name: "my_managers_officeNumber",
+    message: "What is your manager's office phone number?",
+  },
+];
+const engineerQuestions = [
+  {
+    type: "input",
+    name: "engineers_name",
+    message: "What is your engineer's name?",
+  },
+  {
+    type: "input",
+    name: "engineers_id",
+    message: "What is your engineer's id?",
+  },
+  {
+    type: "input",
+    name: "engineers_email",
+    message: "What is your engineer's email?",
+  },
+  {
+    type: "input",
+    name: "engineers_gitHub",
+    message: "What is your engineer's GitHub username?",
+  },
+];
+const internQuestions = [
+  {
+    type: "input",
+    name: "interns_name",
+    message: "What is your intern's name?",
+  },
+  {
+    type: "input",
+    name: "interns_id",
+    message: "What is your intern's id?",
+  },
+  {
+    type: "input",
+    name: "interns_email",
+    message: "What is your intern's email?",
+  },
+  {
+    type: "input",
+    name: "interns_school",
+    message: "What is your intern's school?",
+  },
+];
+const list = [
+  {
+    type: "list",
+    name: "teamMember_type",
+    choices: [
+      "Engineer",
+      "Intern",
+      "I don't want to add any more team members",
+    ],
+    message: "Select the role to add in your team?",
+  },
+];
 
-function promptEmployeeQuestions () {
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "employeeName",
-            message: "Enter employee's full name."
-        },
-        {
-            type: "input",
-            name: "employeeEmail",
-            message: "Enter their email."
-        },
-        {
-            type: "list",
-            name: "role",
-            message: "What is their role?",
-            choices: ["engineer", "intern"]
-        },
-        {
-            when: input => {
-                return input.role == "engineer"
-            },
-            type: "input",
-            name: "github",
-            message: "Engineer, enter your github username:",
-            validate: async (input) => {
-                if (input == "" || /\s/.test(input)) {
-                    return "Please enter a valid GitHub username";
-                }
-                return true;
-            }
-        },
-        {
-            when: input => {
-                return input.role == "intern"
-            },
-            type: "input",
-            name: "school",
-            message: "Intern, enter your school name:",
-            validate: async (input) => {
-                if (input == "") {
-                    return "Please enter a name.";
-                }
-                return true;
-            }
-        },
-        {
-            type: "list",
-            name: "addAnother",
-            message: "Do you want to add another team member?",
-            choices: ["Yes", "No"]
-        }
-    ])
-}
+inquirer.prompt(confirmManager).then((ans) => {
+  if (ans.Manager === true) {
+    promptManager();
+  } else {
+    promptMyManager();
+  }
+});
 
-managerQuestions();
+const promptNext = () => {
+  inquirer.prompt(list).then((data) => {
+    switch (data.teamMember_type) {
+      case "Engineer":
+        promptEngineer();
+        break;
+      case "Intern":
+        promptIntern();
+        break;
+      default:
+        createHtml();
+    }
+  });
+};
+
+//prompt manager, get answers.
+//push object of answers to array.
+const promptManager = () => {
+  inquirer.prompt(managersBio).then((ans) => {
+    console.log(ans);
+    mainArr.push(
+      new Manager(
+        ans.managers_name,
+        ans.managers_id,
+        ans.managers_email,
+        ans.managers_officeNumber
+      )
+    );
+    console.log(mainArr);
+    promptNext();
+  });
+};
+
+const promptMyManager = () => {
+  inquirer.prompt(myManagersBio).then((ans) => {
+    console.log(ans);
+    mainArr.push(
+      new Manager(
+        ans.managers_name,
+        ans.managers_id,
+        ans.managers_email,
+        ans.managers_officeNumber
+      )
+    );
+    console.log(mainArr);
+    promptNext();
+  });
+};
+
+// If you are an Engineer
+const promptEngineer = () => {
+    inquirer.prompt(engineerQuestions).then(ans => {
+        console.log(ans);
+        mainArr.push(new Engineer(ans.engineers_name, ans.engineers_id, ans.engineers_email, ans.engineers_gitHub));
+        promptNext();
+    });
+};
+
+// If you are an Intern
+const promptIntern = () => {
+    inquirer.prompt(internQuestions).then(ans => {
+        console.log(ans);
+        mainArr.push(new Intern(ans.interns_name, ans.interns_id, ans.interns_email, ans.interns_school));
+        promptNext();
+    });
+};
